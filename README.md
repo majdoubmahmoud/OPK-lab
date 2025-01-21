@@ -1,1 +1,61 @@
 # OPK-lab
+
+sudo dnf update
+sudo dnf install git python3-devel libffi-devel gcc openssl-devel python3-libselinux
+sudo yum install openssl-devel bzip2-devel libffi-devel -y
+sudo yum groupinstall "Development Tools" -y
+wget https://www.python.org/ftp/python/3.10.2/Python-3.10.2.tgz
+tar -xzf Python-3.10.2.tgz
+cd Python-3.10.2
+./configure --enable-optimizations
+make altinstall
+sudo make altinstall
+cd
+python3.10 -m venv latest
+source latest/bin/activate
+pip3.10 install -U pip
+pip3.10 install ansible-core
+pip3.10 install git+https://opendev.org/openstack/kolla-ansible@master
+sudo mkdir -p /etc/kolla
+sudo chown $USER:$USER /etc/kolla
+cp -r latest/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+cp latest/share/kolla-ansible/ansible/inventory/all-in-one .
+
+-------------------
+
+[defaults]
+host_key_checking=False
+pipelining=True
+forks=100
+timeout=40
+inventory=all-in-one
+remote_user=openstack
+ask_pass=false
+
+[privilege_escalation]
+become=true
+become_method=sudo
+become_user=root
+become_ask_pass=false
+
+-------------------
+
+sudo vim /etc/sudoers.d/openstack
+openstack ALL=(ALL) NOPASSWD:ALL
+sudo usermod -aG docker $USER
+
+-------------------
+
+Notes about globals.yaml:
+enable_haproxy: "yes" is always yes!
+vip is from internal .100
+nova_compute_virt_type: "qemu" in demo!
+
+Don't forget to edit init-runonce!
+
+check this for operating kolla! IF RESTARTED
+https://docs.openstack.org/kolla-ansible/latest/user/operating-kolla.html
+
+<promiscuous mode='on'/>
+docker restart mariadb
+kolla-ansible reconfigure -i all-in-one --tags nova
