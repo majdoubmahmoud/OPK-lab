@@ -1,8 +1,7 @@
 https://achchusnulchikam.medium.com/deploy-production-ready-openstack-using-kolla-ansible-9cd1d1f210f1
 
 sudo dnf update
-sudo dnf install git python3-devel libffi-devel gcc openssl-devel python3-libselinux
-sudo yum install openssl-devel bzip2-devel libffi-devel -y
+sudo dnf install git python3-devel libffi-devel gcc openssl-devel python3-libselinux bzip2-devel  -y
 sudo yum groupinstall "Development Tools" -y
 wget https://www.python.org/ftp/python/3.10.2/Python-3.10.2.tgz
 tar -xzf Python-3.10.2.tgz
